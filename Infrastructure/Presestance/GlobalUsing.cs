@@ -1,13 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Persistence
-{
-    internal class GlobalUsing
-    {
-
-    }
-}
+﻿global using Domain.Contracts;
+global using Persistence.Data;
+global using Domain.Entities;
