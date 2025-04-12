@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Contracts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,5 +28,14 @@ namespace Persistence.Repositories
 
         public void DeleteAsync(TEntity entity)=>  _storeContext.Set<TEntity>().Remove(entity);
 
+        public async Task<IEnumerable<TEntity>> GetAllWithSpecificationsAsync(Specifications<TEntity> specifications)
+            => await ApplySpecifications(specifications).ToListAsync();
+
+        public async  Task<TEntity> GetByIdWithSpecificationsAsync(Specifications<TEntity> specifications)
+            => await ApplySpecifications(specifications).FirstOrDefaultAsync();
+
+
+        private IQueryable<TEntity> ApplySpecifications(Specifications<TEntity> specifications)
+            => SpecificationsEvaluator.GetQuery(_storeContext.Set<TEntity>(), specifications);
     }
 }
