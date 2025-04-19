@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace Domain.Contracts
 {
-    public interface IGenericRepository<TEntity,TKey> where TEntity : BaseEntity<TKey>
-    {
-        Task<IEnumerable<TEntity>> GetAllAsync(bool trackChanges = false);
-        Task<TEntity?> GetByIdAsync(TKey id);
-        Task AddAsync(TEntity entity);
-        void UpdateAsync(TEntity entity);
-        void DeleteAsync(TEntity entity);
-        Task<IEnumerable<TEntity>> GetAllWithSpecificationsAsync(Specifications<TEntity> specifications);
-        Task<TEntity> GetByIdWithSpecificationsAsync(Specifications<TEntity> specifications);
-    }
-    
+	public interface IGenericRepository<TEntity, TKey> where TEntity : BaseEntity<TKey> 
+	{
+		Task<TEntity> GetAsync(TKey id);
+		Task<IEnumerable<TEntity>> GetAllAsync(bool trackChanges=false);
+		Task AddAsync(TEntity entity);
+		void DeleteAsync(TEntity entity);
+		void UpdateAync(TEntity entity);
+		#region For Specifications
+		Task<IEnumerable<TEntity>> GetAllWithSpecificationsAsync(Specifications<TEntity> specifications);
+		Task<TEntity?> GetByIdWithSpecificationsAsync(Specifications <TEntity> specifications);
+		#endregion
+		Task<int >CountAsync(Specifications<TEntity> specifications);
+	}
 }

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Contracts
 {
-    public interface IDbInitializer
-    {
-        public Task InitializeAsync();
-    }
+	public interface IDbInitializer
+	{
+		public Task InitializerAsync(); 
+		public Task InitializerIdentityAsync(); 
+	}
 }

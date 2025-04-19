@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public class BrandResultDTO
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+	public record BrandResultDto
+	{
+		public int Id { get; set; }
+		public string Name { get; set; }
+	}
 }

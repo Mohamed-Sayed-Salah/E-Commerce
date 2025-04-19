@@ -6,18 +6,28 @@ using System.Threading.Tasks;
 
 namespace Shared
 {
-    public class ProductSpecificationsParameters
-    {
-        public int? BrandId { get; set; }
-        public int? TypeId { get; set; }
-        public ProductSpecificationsSort? Sort { get; set; }
-    }
+	public class ProductSpecificationsParameters
+	{
+		private const int MaximumPageSize = 10;
+		private const int DefaultPageSize= 5;
+		public int? typeId { get; set; }
+		public int? brandId { get; set; }
+		public ProductSpecificationSort? Sort { get; set; }
+		public int PageIndex { get; set; } =1;
+		private int _pageSize;
+		public int PageSize
+		{
+			get => _pageSize;
+			set => _pageSize = value>MaximumPageSize ?MaximumPageSize : value;
+		}
+        public string? Search { get; set; }
 
-    public enum ProductSpecificationsSort
-    {
-        NameAsc,
-        NameDesc,
-        PriceAsc,
-        PriceDesc
     }
+    public enum ProductSpecificationSort
+	{
+		NameAsc,
+		NameDesc,
+		PriceAsc,
+		PriceDes
+	}
 }

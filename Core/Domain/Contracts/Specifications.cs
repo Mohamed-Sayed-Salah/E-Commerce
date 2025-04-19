@@ -7,26 +7,38 @@ using System.Threading.Tasks;
 
 namespace Domain.Contracts
 {
-    public abstract class Specifications<T> where T : class
-    {
-        protected Specifications(Expression<Func<T, bool>> critera)
+	public abstract class Specifications<T> where T : class
+	{
+        public Specifications(Expression<Func<T, bool>> critera)
         {
-            Critera = critera;
+            Critera = critera;   
         }
-
-        public Expression<Func<T, bool>> Critera { get; private set; }
-
-        public List<Expression<Func<T, object>>> IncludeExpressions { get; private set; } = new();
-
+        //Where(p => p.Id == id) => Where Condition
+        public Expression<Func<T, bool>>? Critera {  get;  private set; }
+        //Include(P => P.ProductType).Include(P => P.ProductBrand) => List Of Includes
+        public List<Expression<Func<T, object>>> IncludeExpression { get; private set; } = new();
+		#region For Filteration And Sorting
         public Expression<Func<T, object>> OrderBy { get; private set; }
         public Expression<Func<T, object>> OrderByDescending { get; private set; }
 
+        #endregion
+        #region For Pagination 
+        public int Skip { get;  set; }
+        public int Take { get; set; } 
+        public bool IsPaginated {get ; set;}
+         #endregion
         protected void AddInclude(Expression<Func<T, object>> expression)
-            => IncludeExpressions.Add(expression);
+            => IncludeExpression.Add(expression);
+		protected void SetOrderBy(Expression<Func<T, object>> expression)
+		   => OrderBy = expression;
+		protected void SetOrderByDescending(Expression<Func<T, object>> expression)
+			=> OrderByDescending = expression;
 
-        protected void SetOrderBy(Expression<Func<T, object>> expression)
-            => OrderBy = expression;
-     protected void SetOrderByDescending(Expression<Func<T, object>> expression)
-            => OrderByDescending = expression;
-    }
+        protected void ApplyPagination(int PadeIndex , int PageSize)
+        {
+            IsPaginated = true;
+            Take = PageSize;
+            Skip = (PadeIndex-1) * PageSize;
+        }
+	}
 }

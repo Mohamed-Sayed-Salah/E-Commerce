@@ -1,5 +1,9 @@
 
 using Domain.Contracts;
+using E_Commerce.Extentions;
+using E_Commerce.Factoris;
+using E_Commerce.MiddleWareas;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Persistence.Data;
@@ -9,58 +13,53 @@ using Services.Abstractions;
 
 namespace E_Commerce
 {
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+	public class Program
+	{
+		public static async Task Main(string[] args)
+		{
+			var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+			// Add services to the container.
 
-            builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
-
-            builder.Services.AddDbContext<StoreContext>(options =>
-                {
-                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-                });
-            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IServiceManager, ServiceManager>();
-
-            builder.Services.AddAutoMapper(typeof(Services.AssemblyReference).Assembly);
+			
+            #region  ConfigureServices
+            builder.Services.AddInfraStructureServices(builder.Configuration);
+            builder.Services.AddCoreServices(builder.Configuration);
+            builder.Services.AddPersentationServices();
+			
 
 
+            #endregion
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
+			builder.Services.AddSwaggerGen();
+            #region Build
             var app = builder.Build();
-            await InitializDb(app);
+            #endregion
+
+            #region MiddleWares
+            app.UsCustomMiddleWareExceptions();
+            await app.SeedDbasync();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
             app.UseStaticFiles();
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
             app.MapControllers();
 
             app.Run();
-            async Task InitializDb(WebApplication app)
-            {
-                using var scope = app.Services.CreateScope();
-                var services = scope.ServiceProvider;
-                var dbInitializer = services.GetRequiredService<IDbInitializer>();
-                await dbInitializer.InitializeAsync();
-            }
+
+            
+            #endregion
+
         }
-
-
-    }
+	}
 }
